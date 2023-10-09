@@ -52,10 +52,178 @@ volumes:
     driver: ${VOLUMES_DRIVER}
   react:
     driver: ${VOLUMES_DRIVER}
+  nominatim-data:
+    driver: ${VOLUMES_DRIVER}
 
 services:
 
 ### Workspace Utilities ##################################
+    cube_api:
+        image: cubejs/cube:v0.33.31
+        container_name: cube
+        ports:
+        - 4000:4000
+        - 5999:5999
+        environment:
+        - npm_config_unsafe_perm=true
+        - CUBEJS_CUBESTORE_HOST=cubestore_router
+        volumes:
+        - ../../cube:/cube/conf
+        depends_on:
+        - cubestore_worker_1
+        - cubestore_worker_2
+        - cube_refresh_worker
+        networks:
+        - backend
+
+    cube_refresh_worker:
+        image: cubejs/cube:non-avx
+        environment:
+        - CUBEJS_DB_TYPE=postgres
+        - CUBEJS_DB_EXPORT_BUCKET=cubestore
+        - CUBEJS_CUBESTORE_HOST=cubestore_router
+        - CUBEJS_API_SECRET=291b4a46f8e04bc996ff150307b8962a
+        - CUBEJS_REFRESH_WORKER=true
+        volumes:
+        - ../../cube:/cube/conf
+        networks:
+           - backend
+
+    cubestore_router:
+        image: cubejs/cubestore:non-avx
+        environment:
+        - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002
+        - CUBESTORE_REMOTE_DIR=/cube/data
+        - CUBESTORE_META_PORT=9999
+        - CUBESTORE_SERVER_NAME=cubestore_router:9999
+        - CUBEJS_EX_DB_PORT=3030
+        volumes:
+        - ../.cubestore:/cube/data
+        networks:
+           - backend
+
+    cubestore_worker_1:
+        image: cubejs/cubestore:non-avx
+        environment:
+        - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002
+        - CUBESTORE_SERVER_NAME=cubestore_worker_1:10001
+        - CUBESTORE_WORKER_PORT=10001
+        - CUBESTORE_REMOTE_DIR=/cube/data
+        - CUBESTORE_META_ADDR=cubestore_router:9999
+        - CUBEJS_EX_DB_PORT=3030
+        volumes:
+        - ../.cubestore:/cube/data
+        depends_on:
+        - cubestore_router
+        networks:
+           - backend
+
+    cubestore_worker_2:
+        image: cubejs/cubestore:non-avx
+        environment:
+        - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002
+        - CUBESTORE_SERVER_NAME=cubestore_worker_2:10002
+        - CUBESTORE_WORKER_PORT=10002
+        - CUBESTORE_REMOTE_DIR=/cube/data
+        - CUBESTORE_META_ADDR=cubestore_router:9999
+        - CUBEJS_EX_DB_PORT=3030
+        volumes:
+        - ../.cubestore:/cube/data
+        depends_on:
+        - cubestore_router
+        networks:
+           - backend 
+    devpostgres:
+        container_name: devpostgres
+        image: crunck1/devpostgres
+        ports:
+        - 5431:5432
+        networks:
+        - backend
+    nominatim:
+        container_name: nominatim
+        image: mediagis/nominatim:4.2
+        restart: always
+        ports:
+            - "8082:8080"
+        environment:
+            # see https://github.com/mediagis/nominatim-docker/tree/master/4.2#configuration for more options
+            PBF_URL: https://download.geofabrik.de/europe/italy-latest.osm.pbf
+            REPLICATION_URL: https://download.geofabrik.de/europe/italy-updates/
+            NOMINATIM_PASSWORD: claudio001
+        volumes:
+            - nominatim-data:/var/lib/postgresql/14/main
+        shm_size: 1gb
+        networks:
+        - backend
+        - frontend
+    nominatim2:
+        container_name: nominatim
+        image: mediagis/nominatim:4.2
+        restart: always
+        ports:
+            - "8083:8080"
+        environment:
+            # see https://github.com/mediagis/nominatim-docker/tree/master/4.2#configuration for more options
+            PBF_URL: https://download.geofabrik.de/europe/italy-latest.osm.pbf
+            REPLICATION_URL: https://download.geofabrik.de/europe/italy-updates/
+            NOMINATIM_PASSWORD: claudio001
+        volumes:
+            - ./data/var/lib/postgresql/14/main:/var/lib/postgresql/14/main
+        shm_size: 1gb        
+    swagger-ui:
+        build: ./swagger-ui
+        ports:
+        - "1111:8080"
+        volumes:
+        - ../docs/api.yaml:/api.yaml
+        environment:
+            SWAGGER_JSON: /api.yaml
+        networks:
+        - backend
+    scraper:
+        image: crunck1/scraper
+        build:
+            context: ../../scraper
+            dockerfile: Dockerfile
+        ports:
+        - "8080:8080"  
+        networks:
+        - frontend
+        - backend
+        volumes:
+            - '../../scraper:/usr/src/app'   
+        environment:
+            APP_ENV  : '${APP_ENV}'
+            BASE_URL : '${BASE_URL}'
+            INDOCKER : ${INDOCKER}
+            NODE_ENV : '${NODE_ENV}'
+            OPENAI_API_KEY: '${OPENAI_API_KEY}'
+            DEBUG: nodejs-docker-express:* 
+        #restart: always 
+    ai:
+        depends_on:
+            - redis
+        ports:
+            - 5000:5000
+        build: 
+            context: ../../ai
+            dockerfile: Dockerfile
+        image: crunck1/analyzer-ai:latest
+        networks:
+        - frontend
+        - backend
+        volumes:
+            - '../../ai:/usr/local/src/ai'
+        shm_size: '8gb'
+        environment:
+            FLASK_ENV: development
+            FLASK_APP: ./app.py
+        entrypoint:
+            - flask
+            - run
+            - --no-debugger
+            - --host=0.0.0.0   
     workspace:
       container_name: laradock-workspace-1
       build:
