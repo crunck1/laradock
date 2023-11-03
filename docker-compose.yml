@@ -363,6 +363,7 @@ services:
         - "${WORKSPACE_ANGULAR_CLI_SERVE_HOST_PORT}:4200"
         - "${WORKSPACE_VITE_PORT}:5173"
         - "13714:13714"
+        - "4173:4173" #vitepress
       tty: true
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
