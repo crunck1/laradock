@@ -193,6 +193,7 @@ services:
         - backend
         volumes:
             - '../../scraper:/usr/src/app'   
+            - '../../app/storage/app/public/images:/usr/src/app/images' 
         environment:
             APP_ENV  : '${APP_ENV}'
             BASE_URL : '${BASE_URL}'
