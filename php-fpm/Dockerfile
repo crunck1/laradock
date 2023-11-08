@@ -751,10 +751,14 @@ RUN set -eux; \
       # Add Microsoft repo for Microsoft ODBC Driver 13 for Linux \
       apt-get update \
       && apt-get install -yqq apt-transport-https gnupg lsb-release \
-      && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+      && if [ ${LARADOCK_PHP_VERSION} = "8.1" ] || [ ${LARADOCK_PHP_VERSION} = "8.2" ]; then \
+        curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
+      ;else \
+        curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+      ;fi \
       && curl https://packages.microsoft.com/config/debian/$(lsb_release -rs)/prod.list > /etc/apt/sources.list.d/mssql-release.list \
       && apt-get update -yqq \
-      && ACCEPT_EULA=Y apt-get install -yqq unixodbc unixodbc-dev libgss3 odbcinst msodbcsql17 locales \
+      && ACCEPT_EULA=Y apt-get install -yqq unixodbc unixodbc-dev libgss3 odbcinst msodbcsql18 locales \
       && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
       && ln -sfn /etc/locale.alias /usr/share/locale/locale.alias \
       && locale-gen \
@@ -764,6 +768,10 @@ RUN set -eux; \
         pecl install pdo_sqlsrv-5.6.1 sqlsrv-5.6.1 \
       ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70200" ]; then \
         pecl install pdo_sqlsrv-5.8.1 sqlsrv-5.8.1 \
+      ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70300" ]; then \
+        pecl install pdo_sqlsrv-5.9.0 sqlsrv-5.9.0 \
+      ;elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70400" ]; then \
+        pecl install pdo_sqlsrv-5.10.1 sqlsrv-5.10.1 \
       ;else \
         pecl install pdo_sqlsrv sqlsrv \
       ;fi \
@@ -1166,7 +1174,7 @@ ARG NEW_RELIC_KEY=${NEW_RELIC_KEY}
 ARG NEW_RELIC_APP_NAME=${NEW_RELIC_APP_NAME}
 
 RUN if [ ${NEW_RELIC} = true ]; then \
-  curl -L http://download.newrelic.com/php_agent/release/newrelic-php5-9.18.1.303-linux.tar.gz | tar -C /tmp -zx && \
+  curl -L http://download.newrelic.com/php_agent/archive/10.13.0.2/newrelic-php5-10.13.0.2-linux.tar.gz | tar -C /tmp -zx && \
   export NR_INSTALL_USE_CP_NOT_LN=1 && \
   export NR_INSTALL_SILENT=1 && \
   /tmp/newrelic-php5-*/newrelic-install install && \
