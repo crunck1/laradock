@@ -150,7 +150,7 @@ services:
             # see https://github.com/mediagis/nominatim-docker/tree/master/4.2#configuration for more options
             PBF_URL: https://download.geofabrik.de/europe/italy-latest.osm.pbf
             REPLICATION_URL: https://download.geofabrik.de/europe/italy-updates/
-            NOMINATIM_PASSWORD: claudio001
+            NOMINATIM_PASSWORD: space_1999_saturn
         volumes:
             - nominatim-data:/var/lib/postgresql/14/main
         shm_size: 1gb
@@ -167,7 +167,7 @@ services:
             # see https://github.com/mediagis/nominatim-docker/tree/master/4.2#configuration for more options
             PBF_URL: https://download.geofabrik.de/europe/italy-latest.osm.pbf
             REPLICATION_URL: https://download.geofabrik.de/europe/italy-updates/
-            NOMINATIM_PASSWORD: claudio001
+            NOMINATIM_PASSWORD: space_1999_saturn
         volumes:
             - ./data/var/lib/postgresql/14/main:/var/lib/postgresql/14/main
         shm_size: 1gb        
