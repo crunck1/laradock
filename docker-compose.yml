@@ -54,7 +54,8 @@ volumes:
     driver: ${VOLUMES_DRIVER}
   nominatim-data:
     driver: ${VOLUMES_DRIVER}
-
+  vendor-php:
+    driver: ${VOLUMES_DRIVER}
 services:
 
 ### Workspace Utilities ##################################
@@ -355,6 +356,7 @@ services:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - docker-in-docker:/certs/client
         - ./php-worker/supervisord.d:/etc/supervisord.d
+        - vendor-php:${APP_CODE_PATH_CONTAINER}/vendor
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
@@ -542,6 +544,7 @@ services:
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - ./php-worker/supervisord.d:/etc/supervisord.d
+        - vendor-php:${APP_CODE_PATH_CONTAINER}/vendor
       depends_on:
         - workspace
       extra_hosts:
