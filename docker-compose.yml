@@ -217,7 +217,7 @@ services:
             NODE_ENV : '${NODE_ENV}'
             OPENAI_API_KEY: '${OPENAI_API_KEY}'
             DEBUG: nodejs-docker-express:* 
-        #restart: always 
+        restart: on-failure 
     ai:
         depends_on:
             - redis
