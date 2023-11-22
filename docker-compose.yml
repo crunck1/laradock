@@ -55,7 +55,9 @@ volumes:
   nominatim-data:
     driver: ${VOLUMES_DRIVER}
   vendor-php:
-    driver: ${VOLUMES_DRIVER}
+    driver: ${VOLUMES_DRIVER} 
+  laradock_nominatim-data:
+    external: true
 services:
 
 ### Workspace Utilities ##################################
@@ -142,6 +144,15 @@ services:
         - 5431:5432
         networks:
         - backend
+    devpostgres2:
+        container_name: devpostgres2
+        image: postgres:15-alpine
+        volumes:
+        - ../../devpostgres/data/var/lib/postgresql/data:/var/lib/postgresql/data
+        ports:
+        - 5431:5432
+        networks:
+        - backend
     nominatim:
         container_name: nominatim
         image: mediagis/nominatim:4.2
@@ -171,8 +182,12 @@ services:
             REPLICATION_URL: https://download.geofabrik.de/europe/italy-updates/
             NOMINATIM_PASSWORD: space_1999_saturn
         volumes:
-            - ./data/var/lib/postgresql/14/main:/var/lib/postgresql/14/main
-        shm_size: 1gb        
+            - laradock_nominatim-data:/var/lib/postgresql/14/main
+        shm_size: 1gb
+        networks:
+        - backend
+        - frontend
+        
     swagger-ui:
         build: ./swagger-ui
         ports:
@@ -195,7 +210,6 @@ services:
         - backend
         volumes:
             - '../../scraper:/usr/src/app'   
-            - '../../app/storage/app/public/images:/usr/src/app/images' 
         environment:
             APP_ENV  : '${APP_ENV}'
             BASE_URL : '${BASE_URL}'
@@ -348,8 +362,6 @@ services:
           - INSTALL_MEMCACHED=${WORKSPACE_INSTALL_MEMCACHED}
           - INSTALL_EVENT=${WORKSPACE_INSTALL_EVENT}
           - INSTALL_DNSUTILS=${WORKSPACE_INSTALL_DNSUTILS}
-          - INSTALL_POPPLER_UTILS=${WORKSPACE_INSTALL_POPPLER_UTILS}
-          - INSTALL_JDK=${WORKSPACE_INSTALL_JDK}
           - http_proxy
           - https_proxy
           - no_proxy
@@ -368,7 +380,6 @@ services:
         - "${WORKSPACE_VUE_CLI_UI_HOST_PORT}:8000"
         - "${WORKSPACE_ANGULAR_CLI_SERVE_HOST_PORT}:4200"
         - "${WORKSPACE_VITE_PORT}:5173"
-        - "13714:13714"
       tty: true
       environment:
         - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
@@ -465,12 +476,11 @@ services:
           - PGID=${PHP_FPM_PGID}
           - IMAGEMAGICK_VERSION=${PHP_FPM_IMAGEMAGICK_VERSION}
           - LOCALE=${PHP_FPM_DEFAULT_LOCALE}
-          - NEW_RELIC=${PHP_FPM_NEW_RELIC}
-          - NEW_RELIC_KEY=${PHP_FPM_NEW_RELIC_KEY}
-          - NEW_RELIC_APP_NAME=${PHP_FPM_NEW_RELIC_APP_NAME}
+          - PHP_FPM_NEW_RELIC=${PHP_FPM_NEW_RELIC}
+          - PHP_FPM_NEW_RELIC_KEY=${PHP_FPM_NEW_RELIC_KEY}
+          - PHP_FPM_NEW_RELIC_APP_NAME=${PHP_FPM_NEW_RELIC_APP_NAME}
           - INSTALL_DOCKER_CLIENT=${PHP_FPM_INSTALL_DOCKER_CLIENT}
           - INSTALL_DNSUTILS=${PHP_FPM_INSTALL_DNSUTILS}
-          - INSTALL_POPPLER_UTILS=${PHP_FPM_INSTALL_POPPLER_UTILS}
           - http_proxy
           - https_proxy
           - no_proxy
@@ -1178,8 +1188,8 @@ services:
           - ADMINER_DEFAULT_SERVER=${ADM_DEFAULT_SERVER}
       ports:
         - "${ADM_PORT}:8080"
-      # depends_on:
-      #   - php-fpm
+      depends_on:
+        - php-fpm
       networks:
         - frontend
         - backend
