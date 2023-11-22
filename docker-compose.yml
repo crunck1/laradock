@@ -76,6 +76,7 @@ services:
         - cube_refresh_worker
         networks:
         - backend
+        restart: on-failure
 
     cube_refresh_worker:
         image: cubejs/cube:non-avx
