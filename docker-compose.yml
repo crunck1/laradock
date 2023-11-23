@@ -145,6 +145,7 @@ services:
         networks:
         - backend
     devpostgres2:
+        command: postgres -c 'max_connections=1000'
         container_name: devpostgres2
         image: postgres:15-alpine
         volumes:
