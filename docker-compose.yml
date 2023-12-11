@@ -554,6 +554,8 @@ services:
       environment:
           - NUM_FAST_QUEUE_WORKERS=${NUM_FAST_QUEUE_WORKERS}
           - NUM_LONG_QUEUE_WORKERS=${NUM_LONG_QUEUE_WORKERS}
+      env_file:
+          ../.env
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - ./php-worker/supervisord.d:/etc/supervisord.d
