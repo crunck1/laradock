@@ -154,6 +154,7 @@ services:
         - 5431:5432
         networks:
         - backend
+        shm_size: 3g
     nominatim:
         container_name: nominatim
         image: mediagis/nominatim:4.2
