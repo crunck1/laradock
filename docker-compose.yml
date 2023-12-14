@@ -154,7 +154,7 @@ services:
         - 5431:5432
         networks:
         - backend
-        shm_size: 3g
+        shm_size: 1g
     nominatim:
         container_name: nominatim
         image: mediagis/nominatim:4.2
@@ -234,7 +234,6 @@ services:
         - backend
         volumes:
             - '../../ai:/usr/local/src/ai'
-        shm_size: '8gb'
         environment:
             FLASK_ENV: development
             FLASK_APP: ./app.py
