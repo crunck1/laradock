@@ -145,7 +145,12 @@ services:
         networks:
         - backend
     devpostgres2:
-        command: postgres -c 'max_connections=1000'
+        command: 
+        - "postgres"
+        - "-c"
+        - "max_connections=1000"
+        - "-c"
+        - "shared_buffers=512MB"
         container_name: devpostgres2
         image: postgres:15-alpine
         volumes:
