@@ -247,6 +247,29 @@ services:
             - run
             - --no-debugger
             - --host=0.0.0.0   
+        shm_size: 12g
+        mem_limit: 12g
+        restart: on-failure
+    jupyter:
+      build: 
+        context: ../../Machine-Learning-with-Python
+        dockerfile: Dockerfile
+      ports:
+        - "8888:8888"
+      volumes:
+        - ../../Machine-Learning-with-Python:/notebooks
+      shm_size: 8g
+      mem_limit: 8g
+    jupyter_37:
+      build: 
+        context: ../../ml_job_classifier
+        dockerfile: Dockerfile
+      ports:
+        - "8888:8888"
+      volumes:
+        - ../../Machine-Learning-with-Python:/notebooks
+      shm_size: 8g
+      mem_limit: 8g
     workspace:
       container_name: laradock-workspace-1
       build:
