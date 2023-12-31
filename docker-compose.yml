@@ -248,7 +248,6 @@ services:
             - --no-debugger
             - --host=0.0.0.0   
         shm_size: 12g
-        mem_limit: 12g
         restart: on-failure
     jupyter:
       build: 
