@@ -265,10 +265,16 @@ services:
         dockerfile: Dockerfile
       ports:
         - "8888:8888"
-      volumes:
-        - ../../Machine-Learning-with-Python:/notebooks
       shm_size: 8g
       mem_limit: 8g
+      networks:
+        - frontend
+        - backend
+      volumes:
+          - '../../ai:/usr/local/src/ai'
+      environment:
+          FLASK_ENV: development
+          FLASK_APP: ./app.py
     workspace:
       container_name: laradock-workspace-1
       build:
