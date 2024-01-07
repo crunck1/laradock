@@ -213,7 +213,6 @@ services:
         ports:
         - "8080:8080"  
         networks:
-        - frontend
         - backend
         volumes:
             - '../../scraper:/usr/src/app'   
@@ -623,18 +622,26 @@ services:
           - INSTALL_MONGO=${LARAVEL_HORIZON_INSTALL_MONGO}
           - INSTALL_FFMPEG=${LARAVEL_HORIZON_INSTALL_FFMPEG}
           - INSTALL_AUDIOWAVEFORM=${LARAVEL_HORIZON_INSTALL_AUDIOWAVEFORM}
-          - PUID=${LARAVEL_HORIZON_PUID}
-          - PGID=${LARAVEL_HORIZON_PGID}
+          - PUID=${PHP_WORKER_PUID}
+          - PGID=${PHP_WORKER_PGID}
           - IMAGEMAGICK_VERSION=${LARAVEL_HORIZON_IMAGEMAGICK_VERSION}
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
         - ./laravel-horizon/supervisord.d:/etc/supervisord.d
+        - vendor-php:${APP_CODE_PATH_CONTAINER}/vendor${APP_CODE_CONTAINER_FLAG}
+      container_name: horizon
+
       depends_on:
         - workspace
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       networks:
         - backend
+        - frontend
+      env_file:
+          ../.env
+      ports:
+        - 6666:6666
 
   ### Soketi Server ##############################################
     soketi:
@@ -667,6 +674,8 @@ services:
         - "${NGINX_HOST_HTTP_PORT}:80"
         #- "${NGINX_HOST_HTTPS_PORT}:443"
         - "${VARNISH_BACKEND_PORT}:81"
+      expose:
+        - 80
       depends_on:
         - php-fpm
       networks:
