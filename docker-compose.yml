@@ -542,6 +542,7 @@ services:
 
 ### PHP Worker ############################################
     php-worker:
+      image: crunck1/laradock-php-worker
       build:
         context: ./php-worker
         args:
