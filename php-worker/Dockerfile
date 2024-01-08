@@ -5,7 +5,7 @@
 #
 
 ARG LARADOCK_PHP_VERSION
-FROM php:${LARADOCK_PHP_VERSION}-alpine
+FROM php:${LARADOCK_PHP_VERSION}-alpine3.18
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
