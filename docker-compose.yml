@@ -145,12 +145,24 @@ services:
         networks:
         - backend
     devpostgres2:
-        command: 
+        command:
         - "postgres"
         - "-c"
-        - "max_connections=10000"
+        - "max_connections=1000"
         - "-c"
-        - "shared_buffers=512MB"
+        - "shared_buffers=2GB"
+        - "-c"
+        - "effective_cache_size=4GB"
+        - "-c"
+        - "work_mem=128MB"
+        - "-c"
+        - "maintenance_work_mem=512MB"
+        - "-c"
+        - "checkpoint_completion_target=0.9"
+        - "-c"
+        - "random_page_cost=1.1"
+        - "-c"
+        - "seq_page_cost=1.0"
         container_name: devpostgres2
         image: postgres:15-alpine
         volumes:
