@@ -256,7 +256,8 @@ services:
         entrypoint:
             - flask
             - run
-            - --no-debugger
+            - --debugger 
+            - --reload
             - --host=0.0.0.0   
         shm_size: 12g
         restart: on-failure
