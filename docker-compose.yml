@@ -166,7 +166,7 @@ services:
         container_name: devpostgres2
         image: postgres:15-alpine
         volumes:
-        - ../../devpostgres/data/var/lib/postgresql/data:/var/lib/postgresql/data
+        - ../../devpostres/data/var/lib/postgresql/data:/var/lib/postgresql/data
         ports:
         - 5431:5432
         networks:
