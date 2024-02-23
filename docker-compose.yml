@@ -287,6 +287,13 @@ services:
       environment:
           FLASK_ENV: development
           FLASK_APP: ./app.py
+    sftp:
+      image: atmoz/sftp
+      volumes:
+          - sftp/upload:/home/claudio/sftp
+      ports:
+          - "2222:22"
+      command: claudio:space_1999_saturn:1001
     workspace:
       container_name: laradock-workspace-1
       build:
