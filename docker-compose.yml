@@ -56,8 +56,8 @@ volumes:
     driver: ${VOLUMES_DRIVER}
   vendor-php:
     driver: ${VOLUMES_DRIVER} 
-  laradock_nominatim-data:
-    external: true
+  #laradock_nominatim-data:
+  #  external: true
 services:
 
 ### Workspace Utilities ##################################
@@ -200,8 +200,8 @@ services:
             PBF_URL: https://download.geofabrik.de/europe/italy-latest.osm.pbf
             REPLICATION_URL: https://download.geofabrik.de/europe/italy-updates/
             NOMINATIM_PASSWORD: space_1999_saturn
-        volumes:
-            - laradock_nominatim-data:/var/lib/postgresql/14/main
+        #volumes:
+        #    - laradock_nominatim-data:/var/lib/postgresql/14/main
         shm_size: 1gb
         networks:
         - backend
