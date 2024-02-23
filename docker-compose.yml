@@ -290,7 +290,7 @@ services:
     sftp:
       image: atmoz/sftp
       volumes:
-          - sftp/upload:/home/claudio/sftp
+          - ../../sftp/upload:/home/claudio/sftp
       ports:
           - "2222:22"
       command: claudio:space_1999_saturn:1001
