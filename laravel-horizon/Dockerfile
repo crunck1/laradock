@@ -89,11 +89,11 @@ RUN set -eux; if [ ${INSTALL_LDAP} = true ]; then \
 #Install GD package:
 ARG INSTALL_GD=false
 RUN if [ ${INSTALL_GD} = true ]; then \
-   apk add --update --no-cache freetype-dev libjpeg-turbo-dev jpeg-dev libpng-dev; \
+   apk add --update --no-cache freetype-dev libjpeg-turbo-dev jpeg-dev libpng-dev libwebp-dev; \
    if [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "80200" ] || [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70400" ]; then \
-     docker-php-ext-configure gd --with-freetype --with-jpeg; \
+     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp; \
    else \
-     docker-php-ext-configure gd --with-freetype-dir=/usr/lib/ --with-jpeg-dir=/usr/lib/ --with-png-dir=/usr/lib/; \
+     docker-php-ext-configure gd --with-freetype-dir=/usr/lib/ --with-jpeg-dir=/usr/lib/ --with-png-dir=/usr/lib/;  --with-webp-dir=/usr/lib/;\
    fi && \
    docker-php-ext-install gd \
 ;fi
