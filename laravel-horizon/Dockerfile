@@ -89,7 +89,7 @@ RUN set -eux; if [ ${INSTALL_LDAP} = true ]; then \
 #Install GD package:
 ARG INSTALL_GD=false
 RUN if [ ${INSTALL_GD} = true ]; then \
-   apk add --update --no-cache freetype-dev libjpeg-turbo-dev libfreetype-dev  jpeg-dev libpng-dev libwebp-dev; \
+   apk add --update --no-cache freetype-dev libjpeg-turbo-dev  jpeg-dev libpng-dev libwebp-dev; \
    if [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "80200" ] || [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70400" ]; then \
      ln -s /usr/lib/$(apk --print-arch)-linux-gnu/libXpm.* /usr/lib/ \
     && docker-php-ext-configure gd --enable-gd  --enable-gd-jis-conv  --with-freetype --with-jpeg --with-webp; \
