@@ -116,7 +116,7 @@ services:
         - CUBESTORE_META_ADDR=cubestore_router:9999
         - CUBEJS_EX_DB_PORT=3030
         volumes:
-        - ../.cubestore:/cube/data
+        - ../../cube/.cubestore:/cube/data
         depends_on:
         - cubestore_router
         networks:
@@ -132,7 +132,7 @@ services:
         - CUBESTORE_META_ADDR=cubestore_router:9999
         - CUBEJS_EX_DB_PORT=3030
         volumes:
-        - ../.cubestore:/cube/data
+        - ../../cube/.cubestore:/cube/data
         depends_on:
         - cubestore_router
         networks:
