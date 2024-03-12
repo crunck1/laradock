@@ -102,7 +102,7 @@ services:
         - CUBESTORE_SERVER_NAME=cubestore_router:9999
         - CUBEJS_EX_DB_PORT=3030
         volumes:
-        - ../.cubestore:/cube/data
+        - ../../cube/.cubestore:/cube/data
         networks:
            - backend
 
