@@ -900,6 +900,7 @@ services:
         - ${POSTGRES_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
       ports:
         - "${POSTGRES_PORT}:5432"
+      shm_size: 2g
       command:
         - "postgres"
         - "-c"
