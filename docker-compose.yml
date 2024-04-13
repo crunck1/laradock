@@ -209,7 +209,7 @@ services:
         - backend
         - frontend
     nominatim2:
-        container_name: nominatim
+        container_name: nominatim2
         image: mediagis/nominatim:4.2
         restart: always
         ports:
